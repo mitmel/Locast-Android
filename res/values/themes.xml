@@ -16,6 +16,10 @@
         <!-- windows -->
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
+        
+        <!-- buttons -->
+        <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:buttonStyleSmall">@style/Button</item>
 	</style>
 
 

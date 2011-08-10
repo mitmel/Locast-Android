@@ -58,7 +58,6 @@ import edu.mit.mobile.android.locast.data.MediaProvider;
 import edu.mit.mobile.android.locast.data.Sync;
 import edu.mit.mobile.android.locast.maps.CastsOverlay;
 import edu.mit.mobile.android.locast.ver2.R;
-import edu.mit.mobile.android.locast.ver2.browser.BrowserHome;
 import edu.mit.mobile.android.locast.ver2.events.EventCursorAdapter;
 import edu.mit.mobile.android.locast.ver2.itineraries.BasicLocatableOverlay;
 import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemOverlay;
@@ -99,8 +98,6 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map_list_activity);
 
-		findViewById(R.id.refresh).setOnClickListener(this);
-		findViewById(R.id.home).setOnClickListener(this);
 
 		mMapView = (MapView) findViewById(R.id.map);
 		mMapController = mMapView.getController();
@@ -294,12 +291,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()){
-		case R.id.refresh:
-			refresh(true);
-			break;
-		case R.id.home:
-			startActivity(new Intent(this, BrowserHome.class));
-			break;
+
 		}
 	}
 

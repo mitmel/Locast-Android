@@ -45,7 +45,6 @@ import edu.mit.mobile.android.locast.data.Itinerary;
 import edu.mit.mobile.android.locast.data.MediaProvider;
 import edu.mit.mobile.android.locast.data.Sync;
 import edu.mit.mobile.android.locast.ver2.R;
-import edu.mit.mobile.android.locast.ver2.browser.BrowserHome;
 
 public class ItineraryList extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener {
 
@@ -65,9 +64,6 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simple_list_activity);
-
-		findViewById(R.id.refresh).setOnClickListener(this);
-		findViewById(R.id.home).setOnClickListener(this);
 
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setOnItemClickListener(this);
@@ -162,13 +158,7 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()){
-		case R.id.refresh:
-			refresh(true);
-			break;
 
-		case R.id.home:
-			startActivity(new Intent(this, BrowserHome.class));
-			break;
 		}
 	}
 }

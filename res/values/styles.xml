@@ -62,6 +62,12 @@
  		<item name="android:adjustViewBounds">true</item>
  	</style>
  	
+ 	<style name="Button" parent="@android:style/Widget.Button">
+ 		<item name="android:background">@drawable/button</item>
+ 		<item  name="android:textColor">@android:color/white</item>
+		<item name="android:gravity">center</item>
+ 	</style>
+ 	
  	<style name="CastListItem">
  	
  	</style>
@@ -106,7 +112,7 @@
 	
 	<style name="Notice_common">
 		<item name="android:textStyle">bold</item>
-		<item name="android:background">@drawable/bg_message</item>
+		<item name="android:background">@drawable/map_overshadow_horizontal</item>
 		<item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:gravity">center_vertical</item>
 	</style>
@@ -167,6 +173,7 @@
 	<style name="ActionBar">
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
 		<item name="android:textColor">@android:color/white</item>
+		<item name="android:background">@color/unicef_blue</item>
 	</style>
 	
 	<style name="ActionBar.Button">

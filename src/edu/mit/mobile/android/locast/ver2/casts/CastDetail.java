@@ -50,7 +50,6 @@ import edu.mit.mobile.android.locast.data.Cast;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.maps.CastsOverlay;
 import edu.mit.mobile.android.locast.ver2.R;
-import edu.mit.mobile.android.locast.ver2.browser.BrowserHome;
 import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemOverlay;
 import edu.mit.mobile.android.locast.widget.FavoriteClickHandler;
 import edu.mit.mobile.android.widget.ValidatingCheckBox;
@@ -94,8 +93,6 @@ public class CastDetail extends LocatableDetail implements
 		mLoaderManager = getSupportLoaderManager();
 		mLoaderManager.initLoader(LOADER_CAST, null, this);
 		mLoaderManager.initLoader(LOADER_CAST_MEDIA, null, this);
-		findViewById(R.id.home).setOnClickListener(this);
-		findViewById(R.id.refresh).setOnClickListener(this);
 
 		vcb = (ValidatingCheckBox) findViewById(R.id.favorite);
 
@@ -125,13 +122,6 @@ public class CastDetail extends LocatableDetail implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.home:
-			startActivity(new Intent(this, BrowserHome.class));
-			break;
-
-		case R.id.refresh:
-			startService(new Intent(Intent.ACTION_SYNC, getIntent().getData()));
-			break;
 		}
 	}
 

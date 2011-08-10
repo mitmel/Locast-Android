@@ -54,7 +54,6 @@ import edu.mit.mobile.android.locast.data.Itinerary;
 import edu.mit.mobile.android.locast.data.Sync;
 import edu.mit.mobile.android.locast.maps.CastsOverlay;
 import edu.mit.mobile.android.locast.ver2.R;
-import edu.mit.mobile.android.locast.ver2.browser.BrowserHome;
 
 public class ItineraryDetail extends MapFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener {
 	private static final String TAG = ItineraryDetail.class.getSimpleName();
@@ -85,8 +84,6 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 		mImageCache = ImageCache.getInstance(this);
 
 		mCastView = (ListView)findViewById(R.id.casts);
-		findViewById(R.id.refresh).setOnClickListener(this);
-		findViewById(R.id.home).setOnClickListener(this);
 
 		final LayoutInflater layoutInflater = getLayoutInflater();
 
@@ -164,13 +161,7 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.refresh:
-			refresh(true);
-			break;
 
-		case R.id.home:
-			startActivity(new Intent(this, BrowserHome.class));
-			break;
 		}
 	}
 
