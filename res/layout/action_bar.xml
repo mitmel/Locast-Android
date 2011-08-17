@@ -16,14 +16,6 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:padding="10dip" />
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="GIS"
-		android:textColor="@android:color/white"
-		android:padding="5dip"
-		android:textAppearance="@android:style/TextAppearance.Medium"
-		android:layout_alignBottom="@id/logo"
-		android:layout_alignParentLeft="true" />
+	<ImageView android:id="@+id/imageView1" android:src="@drawable/ic_mel_logo" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_centerVertical="true" android:layout_alignParentLeft="true" android:layout_marginLeft="10dip"></ImageView>
 
 </RelativeLayout>
