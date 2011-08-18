@@ -19,6 +19,7 @@
         
         <!-- buttons -->
         <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:imageButtonStyle">@style/Button</item>
         <item name="android:buttonStyleSmall">@style/Button</item>
 	</style>
 
