@@ -61,6 +61,8 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 
 	private ImageCache mImageCache;
 
+	private boolean firstTime;
+
 	private final String[] ITINERARY_DISPLAY = new String[]{Itinerary._TITLE, Itinerary._THUMBNAIL, Itinerary._DESCRIPTION};
 	private final String[] ITINERARY_PROJECTION = ArrayUtils.concat(new String[]{Itinerary._ID}, ITINERARY_DISPLAY);
 
@@ -85,9 +87,7 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 
 		mImageCache = ImageCache.getInstance(this);
 
-		if (checkFirstTime()){
-			return;
-		}
+		firstTime = checkFirstTime();
 
 		if (Intent.ACTION_VIEW.equals(action)){
 			loadData(intent.getData());
@@ -102,7 +102,9 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 	@Override
 	protected void onResume() {
 		super.onResume();
-		refresh(false);
+		if(!firstTime){
+			refresh(false);
+		}
 	}
 
 	@Override
@@ -134,7 +136,7 @@ public class ItineraryList extends FragmentActivity implements LoaderManager.Loa
 		lm.initLoader(0, loaderArgs, this);
 		setTitle(R.string.itineraries);
 		mUri = data;
-		startService(new Intent(Intent.ACTION_SYNC, data));
+		//startService(new Intent(Intent.ACTION_SYNC, data));
 
 	}
 	@Override
