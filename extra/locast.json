@@ -1,6 +1,10 @@
 {
     "package": {
-        "downloadUrl": "http://mel-pydev.mit.edu/unicef/static/m/unicef_gis_2.0.11.apk"
+        "downloadUrl": "http://mel-pydev.mit.edu/unicef/static/m/unicef_gis_2.0.12.apk"
+    },
+    "2.0.12 unicef": {
+        "versionCode": 27,
+        "changelog": ["Fixes force close when adding media", "improves Portuguese translations"]
     },
     "2.0.11 unicef": {
         "versionCode": 26,
