@@ -121,11 +121,6 @@
 		 
 		 <activity android:name=".browser.BrowserHome" 
 		 	android:label="@string/app_name">
-		 	<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-				
-			</intent-filter>
 		 </activity>
 
 		<activity android:name=".itineraries.ItineraryList">
@@ -133,6 +128,10 @@
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.ver2.itineraries" />
+			</intent-filter>
+		 	<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 				
