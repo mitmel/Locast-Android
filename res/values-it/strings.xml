@@ -125,4 +125,5 @@
   <string name="auth_error_network_protocol_error">Errore di protocollo Network: %1$s</string>
   <string name="videoplayer_notice_loading_video">Caricamento video...</string>
   <string name="loading_data">Caricamento dati...</string>
+  <string name="error_no_data_connection">Connessione a internet necessaria per caricare i contenuti. Riprovare con connessione dati attiva</string>
 </resources>

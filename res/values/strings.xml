@@ -210,4 +210,5 @@
 		<string name="cast_edit_error_camera_did_not_return_image">Error: camera did not return an image. Please try again.</string>
 		<string name="cast_edit_media_empty">Tap the buttons below to add photos and videos</string>
 	<string name="loading_data">Loading data...</string>
+	<string name="error_no_data_connection">You need a data connection to load this content. Please try again with data enabled</string>
 </resources>

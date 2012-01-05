@@ -75,7 +75,7 @@ public class RefreshButton extends ImageButton {
 
 	public void setRefreshing(boolean isRefreshing){
 		if (isRefreshing){
-			setEnabled(false);
+			//setEnabled(false);
 			setImageDrawable(mRefreshingDrawable);
 			startAnimating();
 		}else{

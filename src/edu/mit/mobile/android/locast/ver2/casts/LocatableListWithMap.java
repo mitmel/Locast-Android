@@ -22,10 +22,13 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,6 +69,7 @@ import edu.mit.mobile.android.locast.ver2.R;
 import edu.mit.mobile.android.locast.ver2.events.EventCursorAdapter;
 import edu.mit.mobile.android.locast.ver2.itineraries.BasicLocatableOverlay;
 import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemOverlay;
+import edu.mit.mobile.android.widget.NetworkStatusBroadcastReceiver;
 import edu.mit.mobile.android.widget.NotificationProgressBar;
 import edu.mit.mobile.android.widget.RefreshButton;
 
@@ -87,6 +91,8 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	private long mLastUpdate;
 
 	private ImageCache mImageCache;
+	
+	private static NetworkStatusBroadcastReceiver mNetworkBroadcastReceiver;
 
 	// constants related to auto-refreshing
 	private static long AUTO_UPDATE_FREQUENCY = 15 * 1000 * 1000; // nano-seconds
@@ -125,6 +131,27 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 				mProgressBar.showProgressBar(false);
 				mRefresh.setRefreshing(false);
 				break;
+			case NetworkStatusBroadcastReceiver.MSG_NETWORK_STATE:
+				if (Constants.DEBUG) {
+					Log.d(TAG, "Network state changed");
+				}
+				ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			    	if (Constants.DEBUG) {
+			    		Log.d(TAG, "Network state connecting");
+			    	}
+			    	mProgressBar.setNetworkStatus(true);
+					mRefresh.setRefreshing(true);
+			    }
+			    else{
+			    	if (Constants.DEBUG) {
+			    		Log.d(TAG, "Network state not connecting");
+			    	}
+			    	mProgressBar.setNetworkStatus(false);
+					mRefresh.setRefreshing(false);
+			    }
+				break;
 			}
 		};
 	};
@@ -132,6 +159,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mNetworkBroadcastReceiver=new NetworkStatusBroadcastReceiver(this, mHandler);
 		setContentView(R.layout.map_list_activity);
 		mProgressBar =(NotificationProgressBar) (findViewById(R.id.progressNotification));
 		findViewById(R.id.refresh).setOnClickListener(this);
@@ -217,6 +245,10 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	@Override
 	protected void onResume() {
 		super.onResume();
+		IntentFilter intentFilter=new IntentFilter();
+		intentFilter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
+		intentFilter.addAction(NotificationProgressBar.INTENT_UPDATE_NETWORK_STATUS);
+		this.registerReceiver(mNetworkBroadcastReceiver, intentFilter);
 		if (actionSearchNearby) {
 			mMyLocationOverlay.enableMyLocation();
 		}
@@ -228,6 +260,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	@Override
 	protected void onPause() {
 		super.onPause();
+		this.unregisterReceiver(mNetworkBroadcastReceiver);
 		if (actionSearchNearby) {
 			mMyLocationOverlay.disableMyLocation();
 		}
