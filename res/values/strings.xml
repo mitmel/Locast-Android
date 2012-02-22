@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Default, English -->
 <resources>
-	<string name="app_name">UNICEF GIS</string>
+	<string name="app_name">Memory Traces</string>
 
-    <string name="default_api_url" translatable="false">https://locast.mit.edu/unicef/api/</string>
-	<string name="app_update_url" translatable="false">http://locast.mit.edu/m/unicef_gis.json</string>
+    <string name="default_api_url" translatable="false">https://locast.mit.edu/memorytraces/api/</string>
+	<string name="app_update_url" translatable="false">https://locast.mit.edu/m/memory_traces.json</string>
 	
-    <string name="signup_url" translatable="false">https://locast.mit.edu/unicef/register/</string>
+    <string name="signup_url" translatable="false">https://locast.mit.edu/memorytraces/register/</string>
 	<string name="signup_text">Register to join Locast</string>
 	
 	<!-- Main screen -->
@@ -40,7 +40,7 @@
 	<string name="cast_location">Cast location: </string>
 	<string name="set_location">Set Location</string>
 	<string name="my_casts">My Casts</string>
-	<string name="casts_tags">Tags</string>
+	<string name="casts_tags">Themes</string>
 	<string name="view_casts_in_map">View casts in map</string>
 	<string name="cast_publish_title">Publish Cast</string>
     <string name="action_record_cast">Record a cast</string>
@@ -155,7 +155,7 @@
 	<string name="pref_locast_site_summary">Choose another Locast site.</string>
 	<string name="pref_locast_site_message">This will only affect any newly added accounts. To change this for the active instance you must first remove any existing accounts.</string>
 	
-	<string name="welcome_message">Welcome! Rai Local Abruzzo is a location-based tourism application for visiting Abruzzo.</string>
+	<string name="welcome_message">A collection of Italian memories of Boston</string>
 	
 	<string name="auth_signin_or_skip_notice">You\'ll need an account to upload photos and videos to Rai Local Abruzzo</string>
 	<string name="auth_signin_for_favorites">In order to save your favorite casts, you\'ll need a Rai Local account.</string>
@@ -185,7 +185,7 @@
 	<string name="auth_logout_error">There was an error logging you out.</string>
 	<string name="empty_castmedia">There are no media in this cast.</string>
 	<string name="error_cast_media_no_activities">We\'re sorry, but there doesn\'t seem to be a way to play this media on your device.</string>
-	<string name="itineraries">Maps</string>
+	<string name="itineraries">Stories</string>
 	<string name="nearby">Nearby</string>
 	<string name="favorites">Favorites</string>
 	<string name="events">Events</string>
@@ -223,7 +223,7 @@ reception, try standing in a clear area outside away from buildings.</string>
 	<string name="stop">Stop</string>
 	<string name="location_unknown">Location: Finding...</string>
 	<string name="location_known">Location: Found!</string>
-	<string name="unicef_unsynced_casts">UNICEF Unsynced Casts</string>
+	<string name="unicef_unsynced_casts">Memory Traces Unsynced Casts</string>
 	<string name="no_title">(no title)</string>
 	<string name="home">home</string>
 </resources>
