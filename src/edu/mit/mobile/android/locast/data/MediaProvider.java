@@ -249,7 +249,7 @@ public class MediaProvider extends ContentProvider {
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 		private static final String DB_NAME = "content.db";
-		private static final int DB_VER = 45;
+		private static final int DB_VER = 47;
 
 		public DatabaseHelper(Context context) {
 			super(context, DB_NAME, null, DB_VER);
@@ -296,6 +296,8 @@ public class MediaProvider extends ContentProvider {
 					+ Cast._FAVORITED   + " BOOLEAN,"
 					+ Cast._OFFICIAL    + " BOOLEAN,"
 
+					+ Cast._REF_TIME + " INTEGER,"
+
 					+ Cast._THUMBNAIL_URI+ " TEXT"
 					+ ");"
 					);
@@ -328,6 +330,8 @@ public class MediaProvider extends ContentProvider {
 					+ Itinerary._DESCRIPTION 	+ " TEXT,"
 					+ Itinerary._PRIVACY 		+ " TEXT,"
 					+ Itinerary._CASTS_URI	+ " TEXT,"
+
+					+ Itinerary._JOB_TITLE + " TEXT,"
 
 					+ Itinerary._PATH 		+ " TEXT,"
 					+ Itinerary._CASTS_COUNT + " INTEGER,"

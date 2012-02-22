@@ -33,7 +33,7 @@ public class Cast extends TaggableItem implements Favoritable.Columns, Locatable
 	public static final String
 		_TITLE 			= "title",
 		_DESCRIPTION 	= "description",
-		_OFFICIAL		= "official";
+			_OFFICIAL = "official", _REF_TIME = "reference_time";
 
 	public static final String
 		_MEDIA_PUBLIC_URI = "public_uri",
@@ -51,6 +51,7 @@ public class Cast extends TaggableItem implements Favoritable.Columns, Locatable
 		_CREATED_DATE,
 		_MODIFIED_DATE,
 		_THUMBNAIL_URI,
+ _REF_TIME,
 		_FAVORITED,
 		_LATITUDE,
 		_LONGITUDE,
@@ -58,7 +59,8 @@ public class Cast extends TaggableItem implements Favoritable.Columns, Locatable
 		_DRAFT };
 
 	public static final String
-		SORT_ORDER_DEFAULT = Cast._DRAFT + " DESC," + Cast._FAVORITED + " DESC," + Cast._MODIFIED_DATE+" DESC";
+ SORT_ORDER_DEFAULT = Cast._DRAFT + " DESC," + Cast._FAVORITED
+			+ " DESC," + Cast._REF_TIME + " DESC";
 
 	public static final Uri FEATURED = getTagUri(CONTENT_URI, addPrefixToTag(Cast.SYSTEM_PREFIX, "_featured"));
 	public static final Uri FAVORITE = Favoritable.getFavoritedUri(Cast.CONTENT_URI, true);
@@ -93,6 +95,8 @@ public class Cast extends TaggableItem implements Favoritable.Columns, Locatable
 			//put(_MEDIA_PUBLIC_URI,  new SyncFieldMap("file_url",   SyncFieldMap.STRING, SyncItem.SYNC_FROM | SyncItem.FLAG_OPTIONAL));
 			put(_OFFICIAL,			new SyncFieldMap("official", SyncFieldMap.BOOLEAN, SyncItem.SYNC_FROM));
 			put(_MEDIA_PUBLIC_URI,  new SyncChildRelation("media", new JsonSyncableItem.SyncChildRelation.SimpleRelationship(CastMedia.PATH), SyncItem.SYNC_FROM));
+
+			put(_REF_TIME, new SyncFieldMap("reference_time", SyncFieldMap.DATE));
 
 			//put("_contents", new OrderedList.SyncMapItem("media", new CastVideo(), CastVideo.PATH));
 		}

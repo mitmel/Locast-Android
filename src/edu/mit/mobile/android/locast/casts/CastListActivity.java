@@ -98,7 +98,7 @@ public abstract class CastListActivity extends ListActivity {
 
         setListAdapter(adapter);
 	}
-	
+
 	protected ListAdapter getAdapter(Cursor c) {
 		return new CastCursorAdapter(this, c);
 	}

@@ -54,7 +54,7 @@
 		*****************************************************************************************************
         -->
         <activity
-            android:name=".casts.CastDetail"
+            android:name="edu.mit.mobile.android.locast.memorytraces.CastDetail"
             android:process="edu.mit.mobile.android.locast.Detail" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -178,7 +178,7 @@
             android:name=".browser.BrowserHome"
             android:label="@string/app_name" >
         </activity>
-        <activity android:name=".itineraries.ItineraryList" >
+        <activity android:name="edu.mit.mobile.android.locast.memorytraces.StoryList" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -186,11 +186,7 @@
 
                 <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.ver2.itineraries" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".casts.UnsyncedCastsActivity"
@@ -203,11 +199,7 @@
 
                 <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.ver2.casts" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".itineraries.ItineraryDetail" >
             <intent-filter>
@@ -219,6 +211,15 @@
             </intent-filter>
         </activity>
 
+        
+        <activity android:name="edu.mit.mobile.android.locast.memorytraces.Home" android:label="@string/app_name">
+           <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
         <!--
 		*****************************************************************************************************
 		*                                              Sync                                                 *

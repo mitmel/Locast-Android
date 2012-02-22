@@ -18,23 +18,23 @@ package edu.mit.mobile.android.locast.casts;
  */
 import android.content.Context;
 import android.database.Cursor;
+import android.text.format.DateFormat;
 import android.view.View;
+
+import com.stackoverflow.ArrayUtils;
+
 import edu.mit.mobile.android.imagecache.SimpleThumbnailCursorAdapter;
 import edu.mit.mobile.android.locast.data.Cast;
 import edu.mit.mobile.android.locast.ver2.R;
 
 public class CastCursorAdapter extends SimpleThumbnailCursorAdapter {
-	private final static String[] DEFAULT_FROM = new String[] {	Cast._THUMBNAIL_URI, 	Cast._AUTHOR, 	Cast._TITLE, Cast._DRAFT};
-	private final static int[] DEFAULT_TO      = new int[] {	R.id.media_thumbnail, 	R.id.author, 	android.R.id.text1, R.id.draft};
+	public final static String[] DEFAULT_FROM = new String[] { Cast._THUMBNAIL_URI, Cast._REF_TIME,
+			Cast._TITLE, Cast._DRAFT };
+	private final static int[] DEFAULT_TO      = new int[] {	R.id.media_thumbnail, 	R.id.ref_time, 	android.R.id.text1, R.id.draft};
 	private final static int[] IMAGE_IDS = new int[] {R.id.media_thumbnail };
 
-	public final static String[] DEFAULT_PROJECTION = {
-			Cast._ID,
-			Cast._AUTHOR,
-			Cast._TITLE,
-			Cast._DESCRIPTION,
-			Cast._THUMBNAIL_URI
-		};
+	public final static String[] DEFAULT_PROJECTION = ArrayUtils.concat(new String[] { Cast._ID },
+			DEFAULT_FROM);
 
 	/**
 	 * To add a thumbnail, make sure to include an ImageView  with an ID of R.id.media_thumbnail
@@ -58,11 +58,18 @@ public class CastCursorAdapter extends SimpleThumbnailCursorAdapter {
 	public CastCursorAdapter(Context context, Cursor c) {
 		this(context, c, R.layout.browse_content_item, DEFAULT_FROM, DEFAULT_TO);
 	}
-	
+
 	@Override
 	public void setViewText(android.widget.TextView v, String text) {
 
 		switch (v.getId()){
+			case R.id.ref_time:
+				if (text != null && text.length() > 0) {
+					final CharSequence year = DateFormat.format("yyyy",
+							Long.valueOf(text));
+					v.setText(year);
+				}
+				break;
 		case android.R.id.text2:
 			if (text == null || text.length() == 0){
 				v.setVisibility(View.INVISIBLE);

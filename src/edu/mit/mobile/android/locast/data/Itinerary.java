@@ -54,6 +54,8 @@ public class Itinerary extends TaggableItem implements Favoritable.Columns {
 		_FAVORITES_COUNT = "favorites_count",
 		_THUMBNAIL = "thumbnail";
 
+	public static final String _JOB_TITLE = "job_title";
+
 	public final static String SORT_DEFAULT = _TITLE + " ASC";
 
 	public static final String[] PROJECTION = {
@@ -138,6 +140,7 @@ public class Itinerary extends TaggableItem implements Favoritable.Columns {
 
 			put(_DESCRIPTION, 		new SyncFieldMap("description", SyncFieldMap.STRING, SyncItem.FLAG_OPTIONAL));
 			put(_TITLE, 			new SyncFieldMap("title", SyncFieldMap.STRING));
+			put(_JOB_TITLE, new SyncFieldMap("job_title", SyncFieldMap.STRING, SyncItem.SYNC_FROM));
 			put(_THUMBNAIL, 		new SyncFieldMap("preview_image",   SyncFieldMap.STRING,		 SyncFieldMap.SYNC_FROM|SyncItem.FLAG_OPTIONAL));
 			put(_CASTS_COUNT,      	new SyncFieldMap("casts_count", SyncFieldMap.INTEGER, SyncFieldMap.SYNC_FROM));
 			put(_FAVORITES_COUNT,   new SyncFieldMap("favorites", SyncFieldMap.INTEGER, SyncFieldMap.SYNC_FROM));
