@@ -145,7 +145,8 @@
 	</style>
 	
 	<style name="Notice.Info">
-		<item name="android:drawableLeft">@drawable/ic_info</item>
+		<item name="android:textStyle">normal</item>
+		<item name="android:textColor">@color/foreground_light</item>
 	</style>
 	
 	<style name="SubTitle">
@@ -159,9 +160,10 @@
 	
 	<style name="ItineraryTitle">
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-		<item name="android:textStyle">bold</item>
+		<item name="android:textStyle">bold|italic</item>
 		<item name="android:maxLines">2</item>
 		<item name="android:ellipsize">end</item>
+		<item name="android:textColor">@color/foreground_light_emphasis</item>
 	</style>
 	
 	<style name="CastMediaTitle">
