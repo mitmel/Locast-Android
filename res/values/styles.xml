@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- MAIN -->
+    <!-- windows -->
 
+    <style name="LocastTheme" parent="LightTheme" />
 
-    <!-- This is needed as API level 5 doesn't seem to respect the API-level qualifier. -->
     <style name="LightTheme" parent="@android:style/Theme.Light">
         <item name="android:tabWidgetStyle">@android:style/Widget.TabWidget</item>
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="android:textAppearance">@style/TextAppearance</item>
     </style>
 
     <style name="Theme.NoBackground" parent="@android:style/Theme.Light">
         <item name="android:windowBackground">@null</item>
     </style>
-
-    <style name="LocastTheme" parent="LightTheme"></style>
 
     <style name="LocationLink" parent="@android:style/Widget.Button"></style>
 
@@ -28,22 +28,42 @@
     </style>
 
     <style name="WindowTitleThick.Background">
-
-        <!-- <item name="android:background">@drawable/window_title_background</item> -->
         <item name="android:padding">3dip</item>
-<!--         <item name="android:background">@android:drawable/title_bar</item> -->
  	</style>
- 	
  	
  	<style name="WindowTitleThick.Subtitle">
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-		
  	</style>
+ 	
+ 	<!-- text -->
+ 		
+	<style name="TextAppearance" parent="@android:style/TextAppearance">
+	    <item name="android:textColor">@color/foreground_light</item>
+	    <item name="android:typeface">serif</item>
+	</style>
+	
+	<style name="TextAppearance.Small" parent="@android:style/TextAppearance.Small">
+	   <item name="android:textColor">@color/foreground_light</item>
+	</style>
+	
+	<style name="TextAppearance.Medium" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textColor">@color/foreground_light</item>
+	</style>
+	
+	<style name="TextAppearance.Large" parent="@android:style/TextAppearance.Large">
+	    <item name="android:textColor">@color/foreground_light</item>
+	</style>
+	
+	<style name="TextAppearance.Emphasized">
+	    <item name="android:textColor">@color/foreground_light_emphasis</item>
+	    <item name="android:textStyle">bold|italic</item>
+	</style>
+	
+ 	<!-- Locast semantic styles -->
  	
     <style name="CastMediaItem">
         <item name="android:background">@drawable/picture_frame</item>
     </style>
- 	
  	
  	<style name="Thumbnail">
  		<item name="android:src">@drawable/ic_placeholder</item>
@@ -57,7 +77,7 @@
 		<item name="android:gravity">center</item>
  	</style>
  	
- 	<style name="Button.Negative">
+ 	<style name="Button.Negative"> 
  		<!-- <item name="android:background">@color/negative_action</item> -->
  		<item name="android:tint">@color/negative_action</item>
  	</style>
@@ -73,9 +93,9 @@
  	</style>
  	<style name="CastListItem.Author">
  		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
- 		
  	</style>
- 	 	<style name="CastListItem.Description">
+ 	
+ 	<style name="CastListItem.Description">
  		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
  		<item name="android:maxLines">2</item>
  		<item name="android:ellipsize">end</item>
@@ -100,21 +120,21 @@
 	
 	<style name="ListViewStyle" parent="@android:style/Widget.ListView.White">
 		<item name="android:cacheColorHint">@null</item>
-        <item name="android:divider">?android:attr/listDivider</item>
+        <item name="android:divider">@null</item>
+        <!-- <item name="android:divider">?android:attr/listDivider</item> -->
 		
 	</style>
 	
 	<style name="Notice_common">
-		<item name="android:textStyle">bold</item>
+		<item name="android:textStyle">bold|italic</item>
 		<item name="android:background">@drawable/bg_message</item>
-		<item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:gravity">center_vertical</item>
 	</style>
 	
 	<style name="Notice" parent="@style/Notice_common">
 		<item name="android:drawablePadding">10sp</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textSize">11sp</item>
+		
 	</style>
 	
 	<style name="EmptyList">
@@ -158,6 +178,19 @@
 		<item name="android:textStyle">bold</item>
 	</style>
 	
+	<style name="Cast">
+	    
+	</style>
+	
+	<style name="Cast.Description">
+	    <item name="android:textStyle">italic</item>
+	    <item name="android:autoLink">all</item>
+	</style>
+	
+	<style name="Cast.Author">
+	    <item name="android:visibility">gone</item>
+	</style>
+	
 	<style name="VideoOSD">
 		<item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
 		<item name="android:textStyle">bold</item>
@@ -166,8 +199,8 @@
 	
 	<style name="ActionBar">
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-		<item name="android:textColor">@color/foreground_dark</item>
-		<item name="android:background">@color/background_dark</item>
+		<item name="android:textColor">@color/foreground_light</item>
+		<item name="android:background">@drawable/bg_action_bar</item>
 	</style>
 	
 	<style name="ActionBar.Button">
