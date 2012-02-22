@@ -36,6 +36,7 @@
         android:paddingBottom="1dip"
         android:paddingLeft="6dip"
         android:paddingRight="1dip"
+        android:visibility="gone"
         android:singleLine="true" />
 
     <TextView
@@ -49,6 +50,7 @@
         android:paddingBottom="1dip"
         android:paddingLeft="6dip"
         android:paddingRight="1dip"
+         android:visibility="gone"
         android:singleLine="true" />
 
 </RelativeLayout>

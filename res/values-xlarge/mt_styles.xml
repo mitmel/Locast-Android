@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Button.HomeTopLevel">
+        <item name="android:textColor">@color/mt_foreground_light_emphasis</item>
+        <item name="android:textSize">60sp</item>
+        <item name="android:background">@drawable/btn_main</item>
+    </style>
+
+</resources>

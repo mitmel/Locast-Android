@@ -10,6 +10,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="10dip"
+        android:visibility="gone"
         android:button="@drawable/btn_favorite" />
 
     <TextView
@@ -28,7 +29,9 @@
 
     <TextView
         android:id="@+id/author"
+        style="@style/Cast.Description"
         android:layout_width="fill_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_marginBottom="10dip"
@@ -63,11 +66,11 @@
     </FrameLayout>
 
     <TextView
+        style="@style/Cast.Description"
         android:id="@+id/description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/cast_media_holder"
-        android:autoLink="all"
         android:padding="10dip" />
 
 </RelativeLayout>

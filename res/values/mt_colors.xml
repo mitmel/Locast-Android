@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="mt_foreground_dark">#ffffff</color>
+    <color name="mt_background_dark">#0099ff</color>
+    <color name="mt_foreground_light">#666666</color>
+    <color name="mt_background_light">#f9f6e6</color>
+    <color name="mt_foreground_light_emphasis">#ff0000</color>
+    
+</resources>

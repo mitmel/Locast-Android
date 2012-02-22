@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/action_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        layout="@layout/action_bar" />
+
+    <TextView
+        android:id="@+id/welcome_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/action_bar"
+        android:layout_marginBottom="10sp"
+        android:layout_marginLeft="15dip"
+        android:layout_marginTop="10sp"
+        android:text="@string/welcome_message"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/project_credits"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15sp"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="7sp"
+        android:layout_marginTop="7sp"
+        android:text="@string/project_credits"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/project_credits"
+        android:layout_below="@+id/welcome_message"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/stories"
+                style="@style/Button.HomeTopLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="20sp"
+                android:text="@string/itineraries" />
+
+            <View
+                android:layout_width="1dip"
+                android:layout_height="fill_parent"
+                android:background="@color/mt_foreground_light"
+                android:paddingBottom="5dip"
+                android:paddingTop="5dip" />
+
+            <Button
+                android:id="@+id/themes"
+                style="@style/Button.HomeTopLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxHeight="150sp"
+                android:padding="20sp"
+                android:text="@string/themes" />
+
+            <View
+                android:layout_width="1dip"
+                android:layout_height="fill_parent"
+                android:background="@color/mt_foreground_light"
+                android:paddingBottom="5dip"
+                android:paddingTop="5dip" />
+
+            <Button
+                android:id="@+id/nearby"
+                style="@style/Button.HomeTopLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="20sp"
+                android:text="@string/nearby" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

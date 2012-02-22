@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/action_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        layout="@layout/action_bar" />
+
+    <TextView
+        android:id="@+id/welcome_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/action_bar"
+        android:layout_margin="10sp"
+        android:text="@string/welcome_message"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/themes"
+        style="@style/Button.HomeTopLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="@string/themes" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@color/mt_foreground_light"
+        android:paddingBottom="5dip"
+        android:layout_above="@id/themes"
+        android:paddingTop="5dip" />
+
+    <Button
+        android:id="@+id/stories"
+        style="@style/Button.HomeTopLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/themes"
+        android:text="@string/itineraries" />
+    
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@color/mt_foreground_light"
+        android:paddingBottom="5dip"
+        android:layout_above="@id/stories"
+        android:paddingTop="5dip" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@color/mt_foreground_light"
+        android:paddingBottom="5dip"
+        android:layout_below="@id/themes"
+        android:paddingTop="5dip" />
+
+    <Button
+        android:id="@+id/nearby"
+        style="@style/Button.HomeTopLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/themes"
+        android:text="@string/nearby" />
+    
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@color/mt_foreground_light"
+        android:paddingBottom="5dip"
+        android:layout_below="@id/nearby"
+        android:paddingTop="5dip" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/stories"
+        android:background="@drawable/btn_bg_trans_normal" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15sp"
+        android:layout_marginLeft="7sp"
+        android:layout_marginRight="7sp"
+        android:text="@string/project_credits"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

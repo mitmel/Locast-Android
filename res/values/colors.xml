@@ -3,7 +3,10 @@
     <color name="charred_orange">#4a4740</color>
     <color name="charred_orange_inverse">#b5b8bf</color>
     <color name="solid_version_of_stripes">#eaeae2</color>
-    <color name="foreground_dark">#fff</color>
+    <color name="foreground_dark">#ffffff</color>
     <color name="background_dark">#0099ff</color>
+    <color name="foreground_light">#7f7f7f</color>
+    <color name="background_light">#f9f6e6</color>
+    <color name="foreground_light_emphasis">#ff0000</color>
     <color name="negative_action">#d93131</color>
 </resources>

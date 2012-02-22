@@ -7,16 +7,28 @@
 	android:minHeight="?android:attr/listPreferredItemHeight"
 >
 
-	<ImageView
-		android:id="@+id/media_thumbnail"
-		style="@style/Thumbnail"
-		android:layout_width="48dip"
-		android:layout_height="48dip"
-		android:layout_centerVertical="true"
-		android:layout_alignParentLeft="true"
-		android:background="@drawable/picture_frame"
+    <TextView
+        android:id="@+id/ref_time"
+        android:layout_width="64sp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" 
+        android:layout_alignParentLeft="true"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:background="@drawable/bg_ref_time"
+        android:gravity="center"
+        android:textColor="@color/foreground_light_emphasis"
+        android:textStyle="bold|italic"
+        />
 
-		android:layout_margin="10dip" />
+	<ImageView
+	    android:id="@+id/media_thumbnail"
+	    style="@style/Thumbnail"
+	    android:layout_width="48dip"
+	    android:layout_height="48dip"
+	    android:layout_toRightOf="@id/ref_time"
+	    android:layout_centerVertical="true"
+	    android:layout_margin="10dip"
+	    android:background="@drawable/picture_frame" />
 
 	<TwoLineListItem
 		android:layout_width="fill_parent"
@@ -61,4 +73,5 @@
 		android:layout_margin="7dip"
 		android:padding="7dip"
 		 />
+
 </RelativeLayout>
