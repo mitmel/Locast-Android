@@ -213,6 +213,14 @@
             </intent-filter>
         </activity>
         
+        
+        <activity android:name="edu.mit.mobile.android.locast.memorytraces.ThemesList" android:label="@string/themes" >
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.ver2.tags" />
+            </intent-filter>
+        </activity>
         <!--
 		*****************************************************************************************************
 		*                                              Sync                                                 *

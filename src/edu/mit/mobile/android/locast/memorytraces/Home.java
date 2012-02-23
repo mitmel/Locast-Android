@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import edu.mit.mobile.android.locast.data.Cast;
 import edu.mit.mobile.android.locast.data.Itinerary;
-import edu.mit.mobile.android.locast.data.Tag;
 import edu.mit.mobile.android.locast.ver2.R;
 import edu.mit.mobile.android.locast.ver2.casts.LocatableListWithMap;
 import edu.mit.mobile.android.widget.TextViewUtils;
@@ -39,7 +38,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 				break;
 
 			case R.id.themes:
-				startActivity(new Intent(Intent.ACTION_VIEW, Tag.CONTENT_URI));
+				startActivity(new Intent(Intent.ACTION_VIEW, Cast.getTagListUri(Cast.CONTENT_URI)));
 				break;
 
 			case R.id.nearby:

@@ -9,4 +9,9 @@
         <item name="android:textSize">30sp</item>
         <item name="android:background">@drawable/btn_main</item>
     </style>
+    
+    <style name="MTThemeItem">
+        <item name="android:textColor">@color/mt_foreground_light_emphasis</item>
+        <item name="android:textStyle">bold|italic</item>
+    </style>
 </resources>
