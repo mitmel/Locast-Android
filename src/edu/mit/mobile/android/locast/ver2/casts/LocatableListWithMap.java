@@ -170,7 +170,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 			mAdapter = new CastCursorAdapter(this, null);
 
 			mListView.setAdapter(new ImageLoaderAdapter(this, mAdapter, mImageCache, new int[]{R.id.media_thumbnail}, 48, 48, ImageLoaderAdapter.UNIT_DIP));
-			initMapOverlays(new CastsOverlay(this));
+			initMapOverlays(new CastsOverlay(this, mMapView));
 
 			title = getString(R.string.title_casts);
 
@@ -189,7 +189,9 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 					new int[]{}, 0);
 
 			mListView.setAdapter(mAdapter);
-			initMapOverlays(new BasicLocatableOverlay(LocatableItemOverlay.boundCenterBottom(getResources().getDrawable(R.drawable.ic_map_event))));
+			initMapOverlays(new BasicLocatableOverlay(
+					LocatableItemOverlay.boundCenterBottom(getResources().getDrawable(
+							R.drawable.ic_map_event)), mMapView));
 		}else{
 			throw new IllegalArgumentException("Unhandled content type " + type);
 		}

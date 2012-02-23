@@ -47,6 +47,7 @@ public class EventDetail extends LocatableDetail implements LoaderManager.Loader
 	private Uri mEvent;
 	private MapController mMapController;
 	private BasicLocatableOverlay mEventOverlay;
+	private MapView mMapView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +61,16 @@ public class EventDetail extends LocatableDetail implements LoaderManager.Loader
 
 		mEvent = getIntent().getData();
 		getSupportLoaderManager().initLoader(LOADER_EVENT, null, this);
-		mMapController = ((MapView)findViewById(R.id.map)).getController();
+		mMapView = (MapView) findViewById(R.id.map);
+		mMapController = mMapView.getController();
 
 	}
 
 	@Override
 	protected LocatableItemOverlay createItemOverlay() {
 		mEventOverlay = new BasicLocatableOverlay(
-				BasicLocatableOverlay.boundCenterBottom(
-						getResources().getDrawable(R.drawable.ic_map_event)));
+				BasicLocatableOverlay.boundCenterBottom(getResources().getDrawable(
+						R.drawable.ic_map_event)), mMapView);
 		return mEventOverlay;
 
 	}

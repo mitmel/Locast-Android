@@ -18,9 +18,11 @@ package edu.mit.mobile.android.locast.maps;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 import com.stackoverflow.ArrayUtils;
 
@@ -32,15 +34,18 @@ public class CastsOverlay extends LocatableItemOverlay {
 	private int mOfficialCol, mTitleCol, mDescriptionCol;
 	private final Drawable mOfficialCastDrawable;
 	private final Drawable mCommunityCastDrawable;
+	private final Context mContext;
 
 	public static final String[] CASTS_OVERLAY_PROJECTION = ArrayUtils.concat(LOCATABLE_ITEM_PROJECTION,
 			new String[]{Cast._TITLE, Cast._DESCRIPTION, Cast._OFFICIAL});
 
-	public CastsOverlay(Context context) {
-		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_map_community)));
+	public CastsOverlay(Context context, MapView mapview) {
+		super(boundCenter(context.getResources().getDrawable(R.drawable.ic_map_community)),
+				mapview);
 		final Resources res = context.getResources();
-		mOfficialCastDrawable = boundCenterBottom(res.getDrawable(R.drawable.ic_map_official));
-		mCommunityCastDrawable = boundCenterBottom(res.getDrawable(R.drawable.ic_map_community));
+		mOfficialCastDrawable = boundCenter(res.getDrawable(R.drawable.ic_map_official));
+		mCommunityCastDrawable = boundCenter(res.getDrawable(R.drawable.ic_map_community));
+		mContext = context;
 	}
 
 	@Override
@@ -51,6 +56,15 @@ public class CastsOverlay extends LocatableItemOverlay {
 			mDescriptionCol = mLocatableItems.getColumnIndex(Cast._DESCRIPTION);
 			mOfficialCol =  mLocatableItems.getColumnIndex(Cast._OFFICIAL);
 		}
+	}
+
+	@Override
+	protected boolean onBalloonTap(int index, OverlayItem item) {
+		mLocatableItems.moveToPosition(index);
+		final Cast cast = new Cast(mLocatableItems);
+		mContext.startActivity(new Intent(Intent.ACTION_VIEW, cast.getCanonicalUri()));
+
+		return true;
 	}
 
 	@Override
