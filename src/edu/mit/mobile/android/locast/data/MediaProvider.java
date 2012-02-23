@@ -391,6 +391,7 @@ public class MediaProvider extends ContentProvider {
 	}
 
 	private DatabaseHelper dbHelper;
+	private ContentResolver mContentResolver;
 
 	@Override
 	public boolean onCreate() {
@@ -400,6 +401,8 @@ public class MediaProvider extends ContentProvider {
 		// otherwise, onUpgrade may run during a query when it's called using getReadableDatabase()
 		// and fail.
 		dbHelper.getWritableDatabase().close();
+
+		mContentResolver = getContext().getContentResolver();
 		return true;
 	}
 
@@ -606,7 +609,7 @@ public class MediaProvider extends ContentProvider {
 		}
 
 		if (newItem != null){
-			context.getContentResolver().notifyChange(uri, null, !isDraft /* syncToNetwork */);
+			mContentResolver.notifyChange(uri, null, !isDraft /* syncToNetwork */);
 		}else{
 			throw new SQLException("Failed to insert row into " + uri);
 		}
@@ -779,7 +782,7 @@ public class MediaProvider extends ContentProvider {
 				}
 		}
 
-		c.setNotificationUri(getContext().getContentResolver(), uri);
+		c.setNotificationUri(mContentResolver, uri);
 		return c;
 	}
 
@@ -961,7 +964,7 @@ public class MediaProvider extends ContentProvider {
 				}
 		}
 
-		getContext().getContentResolver().notifyChange(uri, null);
+		mContentResolver.notifyChange(uri, null);
 		if (needSync && canSync){
 
 			LocastSyncService.startSync(getContext(), uri, false);
@@ -1070,7 +1073,7 @@ public class MediaProvider extends ContentProvider {
 		if (!db.inTransaction()) {
 			db.execSQL("VACUUM");
 		}
-		getContext().getContentResolver().notifyChange(uri, null, true);
+		mContentResolver.notifyChange(uri, null, true);
 		return count;
 	}
 
