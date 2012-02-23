@@ -20,6 +20,7 @@ package edu.mit.mobile.android.locast.data;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -773,7 +774,7 @@ public class MediaProvider extends ContentProvider {
 	private Cursor queryByTags(SQLiteQueryBuilder qb, SQLiteDatabase db, String tagString, String taggableItemTable, String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		qb.setTables(taggableItemTable + " AS c, "+TAG_TABLE_NAME +" AS t");
 
-		final Set<String> tags = Tag.toSet(tagString.toLowerCase());
+		final Set<String> tags = Tag.toSet(tagString);
 		final List<String> tagFilterList = new ArrayList<String>(tags.size());
 
 		qb.appendWhere("t."+Tag._REF_ID+"=c."+TaggableItem._ID);
@@ -1233,7 +1234,12 @@ public class MediaProvider extends ContentProvider {
 		// TODO figure out a better way to do this without needing to hard-code this logic.
 		if (tags != null){
 			final Set<String> tagSet = TaggableItem.removePrefixesFromTags(Tag.toSet(tags));
-			query = TaggableItem.SERVER_QUERY_PARAMETER+"=" + ListUtils.join(tagSet, ",");
+			final Set<String> urlEncodedTags = new HashSet<String>();
+
+			for (final String tag : tagSet) {
+				urlEncodedTags.add(URLEncoder.encode(tag));
+			}
+			query = TaggableItem.SERVER_QUERY_PARAMETER + "=" + ListUtils.join(urlEncodedTags, ",");
 		}
 
 		if (dist != null){
