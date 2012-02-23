@@ -33,7 +33,7 @@ public class StoryList extends ItineraryList {
 
 	@Override
 	public int getItineraryItemLayout() {
-		return R.layout.itinerary_item_with_description;
+		return R.layout.mt_stories_item;
 	}
 
 	@Override
