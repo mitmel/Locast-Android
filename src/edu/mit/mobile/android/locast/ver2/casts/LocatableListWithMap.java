@@ -17,6 +17,7 @@ package edu.mit.mobile.android.locast.ver2.casts;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import java.util.List;
+import java.util.Set;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -35,6 +36,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4_map.app.LoaderManager;
 import android.support.v4_map.app.MapFragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,6 +61,7 @@ import edu.mit.mobile.android.locast.data.Event;
 import edu.mit.mobile.android.locast.data.Favoritable;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.data.MediaProvider;
+import edu.mit.mobile.android.locast.data.TaggableItem;
 import edu.mit.mobile.android.locast.maps.CastsOverlay;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
 import edu.mit.mobile.android.locast.sync.LocastSyncStatusObserver;
@@ -206,6 +209,14 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		final Boolean favorited = Favoritable.decodeFavoritedUri(data);
 		if (favorited != null){
 			title = getString(favorited ? R.string.title_favorited : R.string.title_unfavorited, title);
+		}
+
+		try {
+			final Set<String> tags = TaggableItem.getTagsFromUri(data);
+
+			title = getString(R.string.cast_list_tags, TextUtils.join(", ", tags));
+		} catch (final IllegalArgumentException e) {
+			// that's fine, we didn't need to set it!
 		}
 
 		setTitle(title);
