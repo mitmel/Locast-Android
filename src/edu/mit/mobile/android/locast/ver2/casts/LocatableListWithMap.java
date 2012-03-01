@@ -1,6 +1,7 @@
 package edu.mit.mobile.android.locast.ver2.casts;
+
 /*
- * Copyright (C) 2011  MIT Mobile Experience Lab
+ * Copyright (C) 2011-2012 MIT Mobile Experience Lab
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +47,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bricolsoftconsulting.mapchange.MyMapView;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -74,7 +76,6 @@ import edu.mit.mobile.android.widget.RefreshButton;
 
 public class LocatableListWithMap extends MapFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>, OnClickListener, OnItemClickListener {
 
-	@SuppressWarnings("unused")
 	private static final String TAG = LocatableListWithMap.class.getSimpleName();
 	private CursorAdapter mAdapter;
 	private ListView mListView;
@@ -82,12 +83,14 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	private Uri mBaseContent;
 
 	private LocatableItemOverlay mLocatableItemsOverlay;
-	private MapView mMapView;
+	private MyMapView mMapView;
 	private MapController mMapController;
 	private MyMyLocationOverlay mMyLocationOverlay;
 	private Location mLastLocation;
 	private LoaderManager mLoaderManager;
 	private long mLastUpdate;
+
+	private boolean mUserPanned = false;
 
 	private ImageCache mImageCache;
 
@@ -95,7 +98,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	private static long AUTO_UPDATE_FREQUENCY = 15 * 1000 * 1000; // nano-seconds
 	private static float MIN_UPDATE_DISTANCE = 50; // meters
 
-	private int searchRadius = 500; // m
+	private int mSearchRadius = 500; // m
 
 	public static final String
 		ACTION_SEARCH_NEARBY = "edu.mit.mobile.android.locast.ACTION_SEARCH_NEARBY";
@@ -108,6 +111,8 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 	private Object mSyncHandle;
 
 	private NotificationProgressBar mProgressBar;
+
+	private final static int MSG_SET_GEOPOINT = 200;
 
 	private final Handler mHandler = new Handler(){
 		@Override
@@ -128,6 +133,10 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 				mProgressBar.showProgressBar(false);
 				mRefresh.setRefreshing(false);
 				break;
+
+				case MSG_SET_GEOPOINT:
+					setDataUriNear((GeoPoint) msg.obj, msg.arg1);
+					break;
 			}
 		};
 	};
@@ -140,7 +149,7 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		findViewById(R.id.refresh).setOnClickListener(this);
 		findViewById(R.id.home).setOnClickListener(this);
 
-		mMapView = (MapView) findViewById(R.id.map);
+		mMapView = (MyMapView) findViewById(R.id.map);
 		mMapController = mMapView.getController();
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setOnItemClickListener(this);
@@ -164,6 +173,21 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 			return;
 		}
 
+		mMapView.setOnChangeListener(new MyMapView.OnChangeListener() {
+
+			@Override
+			public void onChange(MapView view, GeoPoint newCenter, GeoPoint oldCenter, int newZoom,
+					int oldZoom) {
+				Log.d(TAG, "onChange triggered");
+				if (!oldCenter.equals(newCenter)) {
+					mUserPanned = true;
+					Log.d(TAG, "centers are different, requesting a reload");
+					mHandler.obtainMessage(MSG_SET_GEOPOINT, mSearchRadius, 0, newCenter)
+							.sendToTarget();
+				}
+			}
+		});
+
 		CharSequence title;
 
 		final Uri data = intent.getData();
@@ -177,12 +201,12 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 
 			title = getString(R.string.title_casts);
 
-			searchRadius = 1500;
+			mSearchRadius = 1500;
 
 		}else if (MediaProvider.TYPE_EVENT_DIR.equals(type)){
 
 			title = getString(R.string.title_upcoming_events);
-			searchRadius = 10000;
+			mSearchRadius = 10000;
 
 			mAdapter = new EventCursorAdapter(this,
 					R.layout.browse_content_item,
@@ -266,7 +290,6 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		}else{
 			Toast.makeText(this, R.string.notice_finding_your_location, Toast.LENGTH_LONG).show();
 			setRefreshing(true);
-			mMapView.setVisibility(View.VISIBLE); // show the map, even without location being found
 		}
 		mLastLocation = loc;
 	}
@@ -282,10 +305,28 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		}
 
 		if (actionSearchNearby){
-			setDataUri(Locatable.toDistanceSearchUri(mBaseContent, loc, searchRadius));
+			setDataUriNear(loc, mSearchRadius);
 		}
 
 		mLastLocation = loc;
+	}
+
+	/**
+	 * Loads the data centered around the given point and radius.
+	 *
+	 * @param loc
+	 */
+	private void setDataUriNear(Location loc, int searchRadius) {
+		setDataUri(Locatable.toDistanceSearchUri(mBaseContent, loc, searchRadius));
+	}
+
+	/**
+	 * Loads the data centered around the given point and radius.
+	 *
+	 * @param loc
+	 */
+	private void setDataUriNear(GeoPoint loc, int searchRadius) {
+		setDataUri(Locatable.toDistanceSearchUri(mBaseContent, loc, searchRadius));
 	}
 
 	private void setDataUri(Uri data){
@@ -380,7 +421,8 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		@Override
 		public synchronized void onLocationChanged(Location location) {
 			super.onLocationChanged(location);
-			if (mPrevLocation == null || location.distanceTo(mPrevLocation) > MIN_UPDATE_DISTANCE){
+			if (!mUserPanned
+					&& (mPrevLocation == null || location.distanceTo(mPrevLocation) > MIN_UPDATE_DISTANCE)) {
 				updateLocation(location);
 				mPrevLocation = location;
 			}
@@ -413,27 +455,24 @@ public class LocatableListWithMap extends MapFragmentActivity implements LoaderM
 		mAdapter.swapCursor(c);
 		mLocatableItemsOverlay.swapCursor(c);
 
+		// When items are found
 		if (c.moveToFirst()){
-			mMapController.zoomToSpan(mLocatableItemsOverlay.getLatSpanE6(), mLocatableItemsOverlay.getLonSpanE6());
-			final GeoPoint center = mLocatableItemsOverlay.getCenter();
-			if (mMapView.getVisibility()==View.INVISIBLE){
-				mMapController.setCenter(center);
-			}else{
+			if (!mUserPanned) {
+				mMapController.zoomToSpan(mLocatableItemsOverlay.getLatSpanE6(),
+						mLocatableItemsOverlay.getLonSpanE6());
+				final GeoPoint center = mLocatableItemsOverlay.getCenter();
+
 				mMapController.animateTo(center);
 			}
 		}else{
-			mMapController.setZoom(15);
-			if(mLastLocation != null){
+
+			if (!mUserPanned && mLastLocation != null) {
+				mMapController.setZoom(15);
 				final GeoPoint myPosition = new GeoPoint((int)(mLastLocation.getLatitude() * 1E6), (int)(mLastLocation.getLongitude() * 1E6));
-				if (mMapView.getVisibility()==View.INVISIBLE){
-					mMapController.setCenter(myPosition);
-				}else{
-					mMapController.animateTo(myPosition);
-				}
+
+				mMapController.animateTo(myPosition);
 			}
 		}
-
-		mMapView.setVisibility(View.VISIBLE);
 
 		setRefreshing(false);
 
