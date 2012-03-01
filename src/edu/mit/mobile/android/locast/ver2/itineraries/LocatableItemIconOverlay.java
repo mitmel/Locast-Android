@@ -22,8 +22,10 @@ abstract public class LocatableItemIconOverlay extends ItemizedOverlay<OverlayIt
 	private final ContentObserver mContentObserver = new ContentObserver(new Handler()) {
 		@Override
 		public void onChange(boolean selfChange) {
-			super.onChange(selfChange);
-			populate();
+			synchronized (mLocatableItems) {
+				super.onChange(selfChange);
+				populate();
+			}
 		}
 	};
 
@@ -34,8 +36,10 @@ abstract public class LocatableItemIconOverlay extends ItemizedOverlay<OverlayIt
 
 	public LocatableItemIconOverlay(Cursor items, Drawable marker) {
 		super(marker);
-		mLocatableItems = items;
-		populate();
+		synchronized (mLocatableItems) {
+			mLocatableItems = items;
+			populate();
+		}
 	}
 
 	public static Drawable boundCenterBottom(Drawable drawable){
@@ -44,9 +48,11 @@ abstract public class LocatableItemIconOverlay extends ItemizedOverlay<OverlayIt
 	}
 
 	public void swapCursor(Cursor locatableItems){
-		mLocatableItems = locatableItems;
-		updateCursorCols();
-		populate();
+		synchronized (mLocatableItems) {
+			mLocatableItems = locatableItems;
+			updateCursorCols();
+			populate();
+		}
 	}
 
 	public void onPause(){
@@ -62,13 +68,15 @@ abstract public class LocatableItemIconOverlay extends ItemizedOverlay<OverlayIt
 	}
 
 	public void changeCursor(Cursor locatableItems){
-		final Cursor oldCursor = mLocatableItems;
-		mLocatableItems = locatableItems;
-		updateCursorCols();
-		populate();
+		synchronized (mLocatableItems) {
+			final Cursor oldCursor = mLocatableItems;
+			mLocatableItems = locatableItems;
+			updateCursorCols();
+			populate();
 
-		if (oldCursor != null && !oldCursor.isClosed()){
-			oldCursor.close();
+			if (oldCursor != null && !oldCursor.isClosed()) {
+				oldCursor.close();
+			}
 		}
 	}
 
@@ -115,9 +123,11 @@ abstract public class LocatableItemIconOverlay extends ItemizedOverlay<OverlayIt
 
 	@Override
 	public int size() {
-		if (mLocatableItems == null){
-			return 0;
+		synchronized (mLocatableItems) {
+			if (mLocatableItems == null) {
+				return 0;
+			}
+			return mLocatableItems.getCount();
 		}
-		return mLocatableItems.getCount();
 	}
 }

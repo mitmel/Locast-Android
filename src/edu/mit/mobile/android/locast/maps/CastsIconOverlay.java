@@ -12,6 +12,7 @@ import com.stackoverflow.ArrayUtils;
 import edu.mit.mobile.android.locast.data.Cast;
 import edu.mit.mobile.android.locast.ver2.R;
 import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemIconOverlay;
+import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemOverlay.ComparableOverlayItem;
 
 public class CastsIconOverlay extends LocatableItemIconOverlay {
 
@@ -45,10 +46,10 @@ public class CastsIconOverlay extends LocatableItemIconOverlay {
 	protected OverlayItem createItem(int i) {
 		mLocatableItems.moveToPosition(i);
 
-		final OverlayItem item = new OverlayItem(
+		final ComparableOverlayItem item = new ComparableOverlayItem(
 				getItemLocation(mLocatableItems),
 				mLocatableItems.getString(mTitleCol),
-				mLocatableItems.getString(mDescriptionCol)
+				mLocatableItems.getString(mDescriptionCol), mLocatableItems.getLong(mIdCol)
 				);
 
 		if (mLocatableItems.getInt(mOfficialCol) != 0) {
