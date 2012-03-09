@@ -1,6 +1,7 @@
 package edu.mit.mobile.android.locast.ver2.itineraries;
+
 /*
- * Copyright (C) 2011  MIT Mobile Experience Lab
+ * Copyright (C) 2011-2012  MIT Mobile Experience Lab
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,13 +18,10 @@ package edu.mit.mobile.android.locast.ver2.itineraries;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -53,7 +51,6 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageLoaderAdapter;
@@ -69,7 +66,8 @@ import edu.mit.mobile.android.maps.PathOverlay;
 import edu.mit.mobile.android.widget.NotificationProgressBar;
 import edu.mit.mobile.android.widget.RefreshButton;
 
-public class ItineraryDetail extends MapFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, DialogInterface.OnClickListener {
+public class ItineraryDetail extends MapFragmentActivity implements
+		LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener {
 	private static final String TAG = ItineraryDetail.class.getSimpleName();
 
 	/**
@@ -77,7 +75,6 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 	 * will attempt to hide the map if it's disabled.
 	 */
 	private static final boolean USE_MAP = false;
-	private static final int DIALOG_CASTS = 0;
 
 	private MapView mMapView;
 	private MapController mMapController;
@@ -95,16 +92,13 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 	private static final int UNKNOWN_COUNT = -1;
 	private int mItineraryCastCount = UNKNOWN_COUNT;
 
-	private Timer clickTimer;
-	private final boolean markerClicked = false;
-	private final ArrayList<OverlayItem> clickedItems = new ArrayList<OverlayItem>();
-
 	CursorLoader itinLoader;
 	CursorLoader castLoader;
 
 	private boolean mFirstLoadSync = true;
 
-	private static final String[] ITINERARY_PROJECTION = new String[]{Itinerary._ID, Itinerary._DESCRIPTION, Itinerary._TITLE, Itinerary._CASTS_COUNT, Itinerary._PATH};
+	private static final String[] ITINERARY_PROJECTION = new String[] { Itinerary._ID,
+			Itinerary._DESCRIPTION, Itinerary._TITLE, Itinerary._CASTS_COUNT, Itinerary._PATH };
 
 	private RefreshButton mRefresh;
 
@@ -112,25 +106,25 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 	private NotificationProgressBar mProgressBar;
 
-	private final Handler mHandler = new Handler(){
+	private final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what){
-			case LocastSyncStatusObserver.MSG_SET_REFRESHING:
-				if (Constants.DEBUG){
-					Log.d(TAG, "refreshing...");
-				}
-				mProgressBar.showProgressBar(true);
-				mRefresh.setRefreshing(true);
-				break;
+			switch (msg.what) {
+				case LocastSyncStatusObserver.MSG_SET_REFRESHING:
+					if (Constants.DEBUG) {
+						Log.d(TAG, "refreshing...");
+					}
+					mProgressBar.showProgressBar(true);
+					mRefresh.setRefreshing(true);
+					break;
 
-			case LocastSyncStatusObserver.MSG_SET_NOT_REFRESHING:
-				if (Constants.DEBUG){
-					Log.d(TAG, "done loading.");
-				}
-				mProgressBar.showProgressBar(false);
-				mRefresh.setRefreshing(false);
-				break;
+				case LocastSyncStatusObserver.MSG_SET_NOT_REFRESHING:
+					if (Constants.DEBUG) {
+						Log.d(TAG, "done loading.");
+					}
+					mProgressBar.showProgressBar(false);
+					mRefresh.setRefreshing(false);
+					break;
 			}
 		};
 	};
@@ -142,18 +136,19 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 		super.onCreate(icicle);
 		setContentView(R.layout.itinerary_detail);
 
-		mProgressBar =(NotificationProgressBar) (findViewById(R.id.progressNotification));
+		mProgressBar = (NotificationProgressBar) (findViewById(R.id.progressNotification));
 
 		mImageCache = ImageCache.getInstance(this);
-		clickTimer = new Timer();
 
-		mCastView = (ListView)findViewById(R.id.casts);
+		mCastView = (ListView) findViewById(R.id.casts);
 		findViewById(R.id.refresh).setOnClickListener(this);
 		findViewById(R.id.home).setOnClickListener(this);
 
 		final LayoutInflater layoutInflater = getLayoutInflater();
 
-		mCastView.addHeaderView(layoutInflater.inflate(R.layout.itinerary_detail_list_header, mCastView, false), null, false);
+		mCastView.addHeaderView(
+				layoutInflater.inflate(R.layout.itinerary_detail_list_header, mCastView, false),
+				null, false);
 		mCastView.addFooterView(layoutInflater.inflate(R.layout.list_footer, null), null, false);
 		mCastView.setEmptyView(findViewById(R.id.empty2));
 		mRefresh = (RefreshButton) findViewById(R.id.refresh);
@@ -161,7 +156,7 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 		final View addCast = findViewById(R.id.add_cast);
 		addCast.setOnClickListener(this);
-		if (Constants.CAN_CREATE_CASTS){
+		if (Constants.CAN_CREATE_CASTS) {
 			addCast.setVisibility(View.VISIBLE);
 		}
 		mCastView.setOnItemClickListener(this);
@@ -169,8 +164,8 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 		mCastView.setAdapter(null);
 		registerForContextMenu(mCastView);
 
-		if (USE_MAP){
-			mMapView = (MapView)findViewById(R.id.map);
+		if (USE_MAP) {
+			mMapView = (MapView) findViewById(R.id.map);
 			mMapController = mMapView.getController();
 		} else {
 			final View map = findViewById(R.id.map_container);
@@ -182,7 +177,7 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
 
-		if (Intent.ACTION_VIEW.equals(action)){
+		if (Intent.ACTION_VIEW.equals(action)) {
 			mUri = intent.getData();
 
 			mCastsUri = Itinerary.getCastsUri(mUri);
@@ -198,7 +193,7 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 			initCastList();
 
-		}else{
+		} else {
 			finish();
 		}
 	}
@@ -207,87 +202,95 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 	protected void onResume() {
 		mFirstLoadSync = true;
 		super.onResume();
-		mSyncHandle = ContentResolver.addStatusChangeListener(0xff, new LocastSyncStatusObserver(this, mHandler));
+		mSyncHandle = ContentResolver.addStatusChangeListener(0xff, new LocastSyncStatusObserver(
+				this, mHandler));
 		LocastSyncStatusObserver.notifySyncStatusToHandler(this, mHandler);
 	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mSyncHandle != null){
+		if (mSyncHandle != null) {
 			ContentResolver.removeStatusChangeListener(mSyncHandle);
 		}
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-        AdapterView.AdapterContextMenuInfo info;
-        try {
-            info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-       } catch (final ClassCastException e) {
-           Log.e(TAG, "bad menuInfo", e);
-           return;
-       }
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
-       // XXX the "- 1" below is due to having a header. I'm not sure where this is supposed to be handled.
-       final Cursor c = (Cursor) mCastAdapter.getItem(info.position - 1);
-       if (c == null){
-    	   return;
-       }
+		// only enable this menu if we can actually edit things.
+		if (Constants.CAN_CREATE_CASTS) {
+			AdapterView.AdapterContextMenuInfo info;
+			try {
+				info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+			} catch (final ClassCastException e) {
+				Log.e(TAG, "bad menuInfo", e);
+				return;
+			}
 
-       // load the base menus.
-		final MenuInflater menuInflater = getMenuInflater();
-	    menuInflater.inflate(R.menu.cast_context, menu);
-	    menuInflater.inflate(R.menu.cast_options, menu);
+			// XXX the "- 1" below is due to having a header. I'm not sure where this is supposed to
+			// be handled.
+			final Cursor c = (Cursor) mCastAdapter.getItem(info.position - 1);
+			if (c == null) {
+				return;
+			}
 
-       menu.setHeaderTitle(c.getString(c.getColumnIndex(Cast._TITLE)));
+			// load the base menus.
+			final MenuInflater menuInflater = getMenuInflater();
+			menuInflater.inflate(R.menu.cast_context, menu);
+			menuInflater.inflate(R.menu.cast_options, menu);
 
-       final boolean canEdit = Cast.canEdit(this, c);
-       menu.findItem(R.id.cast_edit).setVisible(canEdit);
-       menu.findItem(R.id.cast_delete).setVisible(canEdit);
+			menu.setHeaderTitle(c.getString(c.getColumnIndex(Cast._TITLE)));
 
+			final boolean canEdit = Cast.canEdit(this, c);
+			menu.findItem(R.id.cast_edit).setVisible(canEdit);
+			menu.findItem(R.id.cast_delete).setVisible(canEdit);
+		} else {
+			super.onCreateContextMenu(menu, v, menuInfo);
+		}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info;
-        try {
-            info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-       } catch (final ClassCastException e) {
-           Log.e(TAG, "bad menuInfo", e);
-           return false;
-       }
+		AdapterView.AdapterContextMenuInfo info;
+		try {
+			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		} catch (final ClassCastException e) {
+			Log.e(TAG, "bad menuInfo", e);
+			return false;
+		}
 
-       final Uri cast = Cast.getCanonicalUri(this, ContentUris.withAppendedId(mCastsUri, info.id));
+		final Uri cast = Cast.getCanonicalUri(this, ContentUris.withAppendedId(mCastsUri, info.id));
 
-       switch (item.getItemId()){
-       case R.id.cast_view:
-    	   startActivity(new Intent(Intent.ACTION_VIEW, cast));
-    	   return true;
+		switch (item.getItemId()) {
+			case R.id.cast_view:
+				startActivity(new Intent(Intent.ACTION_VIEW, cast));
+				return true;
 
-       case R.id.cast_edit:
-    	   startActivity(new Intent(Intent.ACTION_EDIT, cast));
-    	   return true;
+			case R.id.cast_edit:
+				startActivity(new Intent(Intent.ACTION_EDIT, cast));
+				return true;
 
-       case R.id.cast_delete:
-    	   startActivity(new Intent(Intent.ACTION_DELETE, cast));
-    	   return true;
+			case R.id.cast_delete:
+				startActivity(new Intent(Intent.ACTION_DELETE, cast));
+				return true;
 
-//       case R.id.cast_play:
-//    	   startActivity(new Intent(CastDetailsActivity.ACTION_PLAY_CAST, cast));
-//    	   return true;
+				// case R.id.cast_play:
+				// startActivity(new Intent(CastDetailsActivity.ACTION_PLAY_CAST, cast));
+				// return true;
 
-       default:
-    	   return super.onContextItemSelected(item);
-       }
+			default:
+				return super.onContextItemSelected(item);
+		}
 	}
 
-	private void initCastList(){
+	private void initCastList() {
 
 		mCastAdapter = new CastCursorAdapter(ItineraryDetail.this, null);
-		mCastView.setAdapter(new ImageLoaderAdapter(this, mCastAdapter, mImageCache, new int[]{R.id.media_thumbnail}, 48, 48, ImageLoaderAdapter.UNIT_DIP ));
+		mCastView.setAdapter(new ImageLoaderAdapter(this, mCastAdapter, mImageCache,
+				new int[] { R.id.media_thumbnail }, 48, 48, ImageLoaderAdapter.UNIT_DIP));
 
-		if (USE_MAP){
+		if (USE_MAP) {
 
 			mCastsOverlay = new CastsIconOverlay(ItineraryDetail.this);
 			mPathOverlay = new PathOverlay(this);
@@ -298,9 +301,10 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 		}
 	}
 
-	private void refresh(boolean explicitSync){
+	private void refresh(boolean explicitSync) {
 		final Bundle extras = new Bundle();
-		if (mItineraryCastCount == UNKNOWN_COUNT || (mItineraryCastCount != mCastAdapter.getCount())){
+		if (mItineraryCastCount == UNKNOWN_COUNT
+				|| (mItineraryCastCount != mCastAdapter.getCount())) {
 			extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 		}
 
@@ -312,43 +316,40 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 	}
 
-
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
 
 		final Cursor cast = (Cursor) adapter.getItemAtPosition(position);
 		final int dratCol = cast.getColumnIndex(Cast._DRAFT);
-		final boolean isDraft = ! cast.isNull(dratCol) && cast.getInt(dratCol) == 1;
+		final boolean isDraft = !cast.isNull(dratCol) && cast.getInt(dratCol) == 1;
 
-		if (isDraft){
+		if (isDraft) {
 			startActivity(new Intent(Intent.ACTION_EDIT, ContentUris.withAppendedId(mCastsUri, id)));
-		}else{
+		} else {
 			startActivity(new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(mCastsUri, id)));
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.refresh:
-			refresh(true);
-			break;
+		switch (v.getId()) {
+			case R.id.refresh:
+				refresh(true);
+				break;
 
-		case R.id.home:
-			startActivity(getPackageManager().getLaunchIntentForPackage(getPackageName()));
-            break;
+			case R.id.home:
+				startActivity(getPackageManager().getLaunchIntentForPackage(getPackageName()));
+				break;
 
-		case R.id.add_cast:
-			startActivity(new Intent(Intent.ACTION_INSERT, Itinerary.getCastsUri(getIntent().getData())));
-			break;
+			case R.id.add_cast:
+				startActivity(new Intent(Intent.ACTION_INSERT, Itinerary.getCastsUri(getIntent()
+						.getData())));
+				break;
 		}
 	}
 
-	private static final int
-		LOADER_ITINERARY = 0,
-		LOADER_CASTS = 1;
-	private static final String
-		LOADER_ARG_DATA = "edu.mit.mobile.android.locast.LOADER_ARG_DATA";
+	private static final int LOADER_ITINERARY = 0, LOADER_CASTS = 1;
+	private static final String LOADER_ARG_DATA = "edu.mit.mobile.android.locast.LOADER_ARG_DATA";
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -356,15 +357,15 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 		CursorLoader cl = null;
 
-		switch (id){
-		case LOADER_ITINERARY:
-			cl = new CursorLoader(this, uri, ITINERARY_PROJECTION, null, null, null);
-			break;
+		switch (id) {
+			case LOADER_ITINERARY:
+				cl = new CursorLoader(this, uri, ITINERARY_PROJECTION, null, null, null);
+				break;
 
-		case LOADER_CASTS:
+			case LOADER_CASTS:
 				cl = new CursorLoader(this, uri, CastCursorAdapter.DEFAULT_PROJECTION, null, null,
 						Cast.SORT_ORDER_DEFAULT);
-			break;
+				break;
 
 		}
 
@@ -375,77 +376,84 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-		switch (loader.getId()){
-		case LOADER_ITINERARY:{
-			if (c.moveToFirst()){
-				mItineraryCastCount = c.getInt(c.getColumnIndex(Itinerary._CASTS_COUNT));
-				final String description = c.getString(c.getColumnIndex(Itinerary._DESCRIPTION));
-				((TextView)findViewById(R.id.description)).setText(description);
-				((TextView)findViewById(R.id.description_empty)).setText(description);
+		switch (loader.getId()) {
+			case LOADER_ITINERARY: {
+				if (c.moveToFirst()) {
+					mItineraryCastCount = c.getInt(c.getColumnIndex(Itinerary._CASTS_COUNT));
+					final String description = c
+							.getString(c.getColumnIndex(Itinerary._DESCRIPTION));
+					((TextView) findViewById(R.id.description)).setText(description);
+					((TextView) findViewById(R.id.description_empty)).setText(description);
 
 					((TextView) findViewById(android.R.id.title)).setText(c.getString(c
 							.getColumnIndex(Itinerary._TITLE)));
 
-				if (USE_MAP){
-					final List<GeoPoint> path = Itinerary.getPath(c);
-					mPathOverlay.setPath(path);
+					if (USE_MAP) {
+						final List<GeoPoint> path = Itinerary.getPath(c);
+						mPathOverlay.setPath(path);
 
 						if (!path.isEmpty()) {
 							mMapController.setCenter(mPathOverlay.getCenter());
 						}
 
-					if (Constants.USES_OSMDROID){
-						// this needs to be run after the MapView has been first sized due to a bug in zoomToSpan()
-						mMapView.post(new Runnable() {
+						if (Constants.USES_OSMDROID) {
+							// this needs to be run after the MapView has been first sized due to a
+							// bug in zoomToSpan()
+							mMapView.post(new Runnable() {
 
-							@Override
-							public void run() {
-								if (mMapView.getHeight() > 0){
-									mMapController.zoomToSpan(mPathOverlay.getLatSpanE6(), mPathOverlay.getLonSpanE6());
-								}else{
-									mMapView.post(this);
+								@Override
+								public void run() {
+									if (mMapView.getHeight() > 0) {
+										mMapController.zoomToSpan(mPathOverlay.getLatSpanE6(),
+												mPathOverlay.getLonSpanE6());
+									} else {
+										mMapView.post(this);
+									}
 								}
-							}
-						});
-					}else{
-						mMapController.zoomToSpan(mPathOverlay.getLatSpanE6(), mPathOverlay.getLonSpanE6());
+							});
+						} else {
+							mMapController.zoomToSpan(mPathOverlay.getLatSpanE6(),
+									mPathOverlay.getLonSpanE6());
+						}
+
+						mMapView.setVisibility(View.VISIBLE);
 					}
-
-					mMapView.setVisibility(View.VISIBLE);
+				} else {
+					Log.e(TAG, "error loading itinerary");
 				}
-			}else{
-				Log.e(TAG, "error loading itinerary");
-			}
 
-		}break;
+			}
+				break;
 
-		case LOADER_CASTS:{
-			mCastAdapter.swapCursor(c);
-			if (USE_MAP){
-				mCastsOverlay.swapCursor(c);
+			case LOADER_CASTS: {
+				mCastAdapter.swapCursor(c);
+				if (USE_MAP) {
+					mCastsOverlay.swapCursor(c);
+				}
+				// this is done after the casts are loaded so that an expedited sync can be
+				// requested if the list is empty.
+				if (mFirstLoadSync) {
+					refresh(false);
+					mFirstLoadSync = false;
+				}
 			}
-			// this is done after the casts are loaded so that an expedited sync can be requested if the list is empty.
-			if (mFirstLoadSync){
-				refresh(false);
-				mFirstLoadSync = false;
-			}
-		}break;
+				break;
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		switch (loader.getId()){
-		case LOADER_CASTS:
-			mCastAdapter.swapCursor(null);
-			if (USE_MAP){
-				mCastsOverlay.swapCursor(null);
-			}
-			break;
+		switch (loader.getId()) {
+			case LOADER_CASTS:
+				mCastAdapter.swapCursor(null);
+				if (USE_MAP) {
+					mCastsOverlay.swapCursor(null);
+				}
+				break;
 
-		case LOADER_ITINERARY:
+			case LOADER_ITINERARY:
 
-			break;
+				break;
 		}
 	}
 
@@ -453,7 +461,7 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.itinerary_detail, menu);
-		if (Constants.CAN_CREATE_CASTS){
+		if (Constants.CAN_CREATE_CASTS) {
 			menu.findItem(R.id.add_cast).setVisible(true);
 		}
 		return true;
@@ -461,92 +469,23 @@ public class ItineraryDetail extends MapFragmentActivity implements LoaderManage
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()){
-		case R.id.add_cast:
-			startActivity(new Intent(Intent.ACTION_INSERT, Itinerary.getCastsUri(getIntent().getData())));
-			return true;
+		switch (item.getItemId()) {
+			case R.id.add_cast:
+				startActivity(new Intent(Intent.ACTION_INSERT, Itinerary.getCastsUri(getIntent()
+						.getData())));
+				return true;
 
-		case R.id.refresh:
-			refresh(true);
-			return true;
+			case R.id.refresh:
+				refresh(true);
+				return true;
 
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
-/*
-	@Override
-	public boolean onItemLongPress(int position, OverlayItem item) {
-		return false;
-	}
-
-	@Override
-	public boolean onItemSingleTapUp(int position, OverlayItem item) {
-		if (!markerClicked) {
-			clickedItems.clear();
-			markerClicked = true;
-			clickTimer.schedule(new ClickTimer(), 100);
-		}
-
-		clickedItems.add(item);
-		return false;
-	}*/
-
-	@Override
-	public void onClick(DialogInterface arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-/*	protected void showCastChooserDialog() {
-		final String[] items = new String[clickedItems.size()];
-		for (int i = 0; i < items.length; i++)
-		{
-			items[i] = clickedItems.get(i).mTitle;
-		}
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Casts");
-		builder.setItems(items, this);
-		final Dialog dialog = builder.create();
-		dialog.show();
-	}
-
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-		selectOverlay(clickedItems.get(which));
-	}
-
-	private void selectOverlay(OverlayItem item) {
-		try {
-			final long selectedId = Long.parseLong(item);
-			startActivity(new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(mCastsUri, selectedId)));
-		} catch (final Exception e) {
-			Log.e(TAG, "Error trying to parse id", e);
-		}
-	}
-
-	private class ClickTimer extends TimerTask {
-		@Override
-		public void run() {
-			if (clickedItems.size() > 1) {
-			    runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						showCastChooserDialog();
-					}
-				});
-		    } else {
-				selectOverlay(clickedItems.get(0));
-			}
-
-			markerClicked = false;
-		}
-	}*/
 }
