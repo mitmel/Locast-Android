@@ -1,7 +1,7 @@
 package edu.mit.mobile.android.locast.sync;
 
 /*
- * Copyright (C) 2011  MIT Mobile Experience Lab
+ * Copyright (C) 2011-2012  MIT Mobile Experience Lab
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +64,7 @@ import edu.mit.mobile.android.utils.StreamUtils;
 
 public class SyncEngine {
 	private static final String TAG = SyncEngine.class.getSimpleName();
-	
+
 	public final static String SYNC_STATUS_CHANGED = "edu.mit.mobile.android.locast.SYNC_STATUS_CHANGED";
 	public final static String EXTRA_SYNC_STATUS = "edu.mit.mobile.android.locast.EXTRA_SYNC_STATUS";
 	public final static String EXTRA_SYNC_ID = "edu.mit.mobile.android.locast.EXTRA_SYNC_ID";
@@ -658,14 +658,19 @@ public class SyncEngine {
 					switch (ss.state) {
 						case ALREADY_UP_TO_DATE:
 						case NOW_UP_TO_DATE:
-							Log.d(TAG, item
-									+ " is already up to date. No need to see if it was deleted.");
+							if (DEBUG) {
+								Log.d(TAG,
+										item
+												+ " is already up to date. No need to see if it was deleted.");
+							}
 							continue;
 
 						case BOTH_UNKNOWN:
-							Log.d(TAG,
-									item
-											+ " was found on both sides, but has an unknown sync status. Skipping...");
+							if (DEBUG) {
+								Log.d(TAG,
+										item
+												+ " was found on both sides, but has an unknown sync status. Skipping...");
+							}
 							continue;
 
 						default:
@@ -681,12 +686,16 @@ public class SyncEngine {
 
 					switch (hr.getStatusLine().getStatusCode()) {
 						case 200:
-							Log.d(TAG, "HEAD " + pubUri + " returned 200");
+							if (DEBUG) {
+								Log.d(TAG, "HEAD " + pubUri + " returned 200");
+							}
 							ss.state = SyncState.BOTH_UNKNOWN;
 							break;
 
 						case 404:
-							Log.d(TAG, "HEAD " + pubUri + " returned 404. Deleting locally...");
+							if (DEBUG) {
+								Log.d(TAG, "HEAD " + pubUri + " returned 404. Deleting locally...");
+							}
 							ss.state = SyncState.DELETED_REMOTELY;
 							final ContentProviderOperation deleteOp = ContentProviderOperation
 									.newDelete(
@@ -769,18 +778,18 @@ public class SyncEngine {
 				if (Thread.interrupted()) {
 					throw new InterruptedException();
 				}
-				
+
 				final long id = uploadMe.getLong(idCol);
 
 				final Uri localUri = isDir ? ContentUris.withAppendedId(toSync,
 						id) : toSync;
 				final String postUri = MediaProvider.getPostPath(mContext, localUri);
-				
+
 				Intent intent = new Intent(SYNC_STATUS_CHANGED);
 				intent.putExtra(EXTRA_SYNC_STATUS, "castBegin");
 				intent.putExtra(EXTRA_SYNC_ID, id);
 				mContext.sendStickyBroadcast(intent);
-				
+
 				try {
 					final JSONObject jo = JsonSyncableItem.toJSON(mContext,
 							localUri, uploadMe, syncMap);
