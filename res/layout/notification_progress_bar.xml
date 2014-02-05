@@ -22,5 +22,14 @@
         android:layout_weight="1"
         android:spacing="0dip"
         android:text="@string/error_no_featured_casts" />
+    <TextView
+        android:id="@+id/noDataTextView"
+        style="@style/EmptyList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:spacing="0dip"
+        android:text="@string/error_no_data_connection"
+        android:visibility="gone" />
 
 </FrameLayout>

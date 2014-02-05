@@ -19,9 +19,14 @@ package edu.mit.mobile.android.locast.ver2.browser;
  */
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -55,6 +60,7 @@ import edu.mit.mobile.android.locast.sync.LocastSyncService;
 import edu.mit.mobile.android.locast.sync.LocastSyncStatusObserver;
 import edu.mit.mobile.android.locast.ver2.R;
 import edu.mit.mobile.android.locast.ver2.casts.LocatableListWithMap;
+import edu.mit.mobile.android.widget.NetworkStatusBroadcastReceiver;
 import edu.mit.mobile.android.widget.NotificationProgressBar;
 import edu.mit.mobile.android.widget.RefreshButton;
 
@@ -77,6 +83,8 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 	private static final int LOADER_FEATURED_CASTS = 0;
 
 	private static final int DIALOG_LOGOUT = 100;
+	
+	private static NetworkStatusBroadcastReceiver mNetworkBroadcastReceiver;
 
 	private final Handler mHandler = new Handler() {
 		@Override
@@ -97,6 +105,27 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 					mProgressBar.showProgressBar(false);
 					mRefresh.setRefreshing(false);
 					break;
+				case NetworkStatusBroadcastReceiver.MSG_NETWORK_STATE:
+					if (Constants.DEBUG) {
+						Log.d(TAG, "Network state changed");
+					}
+					ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+				    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+				    	if (Constants.DEBUG) {
+				    		Log.d(TAG, "Network state connecting");
+				    	}
+				    	mProgressBar.setNetworkStatus(true);
+						mRefresh.setRefreshing(true);
+				    }
+				    else{
+				    	if (Constants.DEBUG) {
+				    		Log.d(TAG, "Network state not connecting");
+				    	}
+				    	mProgressBar.setNetworkStatus(false);
+						mRefresh.setRefreshing(false);
+				    }
+					break;
 			}
 		};
 	};
@@ -106,11 +135,28 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		mNetworkBroadcastReceiver=new NetworkStatusBroadcastReceiver(this, mHandler);
 		mImageCache = ImageCache.getInstance(this);
 
 		setContentView(R.layout.browser_main);
 		mProgressBar =(NotificationProgressBar) (findViewById(R.id.progressNotification));
+		mRefresh = (RefreshButton) findViewById(R.id.refresh);
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	    	if (Constants.DEBUG) {
+	    		Log.d(TAG, "Network state connecting");
+	    	}
+	    	mProgressBar.setNetworkStatus(true);
+			mRefresh.setRefreshing(true);
+	    }
+	    else{
+	    	if (Constants.DEBUG) {
+	    		Log.d(TAG, "Network state not connecting");
+	    	}
+	    	mProgressBar.setNetworkStatus(false);
+			mRefresh.setRefreshing(false);
+	    }
 		if (Constants.USE_APPUPDATE_CHECKER) {
 			mAppUpdateChecker = new AppUpdateChecker(this, getString(R.string.app_update_url),
 					new AppUpdateChecker.OnUpdateDialog(this, getString(R.string.app_name)));
@@ -130,7 +176,7 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 		final LoaderManager lm = getSupportLoaderManager();
 		lm.initLoader(LOADER_FEATURED_CASTS, null, this);
 
-		mRefresh = (RefreshButton) findViewById(R.id.refresh);
+		
 		mRefresh.setOnClickListener(this);
 		findViewById(R.id.itineraries).setOnClickListener(this);
 		findViewById(R.id.events).setOnClickListener(this);
@@ -149,7 +195,7 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 	@Override
 	protected void onPause() {
 		super.onPause();
-
+		this.unregisterReceiver(mNetworkBroadcastReceiver);
 		if (mSyncHandle != null) {
 			ContentResolver.removeStatusChangeListener(mSyncHandle);
 		}
@@ -158,10 +204,13 @@ public class BrowserHome extends FragmentActivity implements LoaderManager.Loade
 	@Override
 	protected void onResume() {
 		super.onResume();
+		IntentFilter intentFilter=new IntentFilter();
+		intentFilter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
+		intentFilter.addAction(NotificationProgressBar.INTENT_UPDATE_NETWORK_STATUS);
+		this.registerReceiver(mNetworkBroadcastReceiver, intentFilter);
 		mSyncHandle = ContentResolver.addStatusChangeListener(0xff, new LocastSyncStatusObserver(
 				this, mHandler));
 		LocastSyncStatusObserver.notifySyncStatusToHandler(this, mHandler);
-
 		if (shouldRefresh) {
 			refresh(false);
 		}

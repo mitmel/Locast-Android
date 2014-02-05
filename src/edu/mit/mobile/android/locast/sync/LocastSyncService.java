@@ -51,6 +51,7 @@ import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.data.SyncException;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.net.NetworkProtocolException;
+import edu.mit.mobile.android.widget.NotificationProgressBar;
 
 /**
  * A wrapper to {@link SyncEngine} which provides the interface to the
@@ -85,7 +86,7 @@ public class LocastSyncService extends Service {
 	 * @see #startSync(Account, Uri, boolean, Bundle)
 	 */
 	public static void startSync(Context context, Uri what) {
-		startSync(Authenticator.getFirstAccount(context), what, false, new Bundle());
+		startSync(context,Authenticator.getFirstAccount(context), what, false, new Bundle());
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class LocastSyncService extends Service {
 	 * @see #startSync(Account, Uri, boolean, Bundle)
 	 */
 	public static void startSync(Context context, Uri what, boolean explicitSync) {
-		startSync(Authenticator.getFirstAccount(context), what, explicitSync, new Bundle());
+		startSync(context,Authenticator.getFirstAccount(context), what, explicitSync, new Bundle());
 	}
 
 	/**
@@ -108,14 +109,14 @@ public class LocastSyncService extends Service {
 	 * @see #startSync(Account, Uri, boolean, Bundle)
 	 */
 	public static void startSync(Context context, Uri what, boolean explicitSync, Bundle extras) {
-		startSync(Authenticator.getFirstAccount(context), what, explicitSync, extras);
+		startSync(context,Authenticator.getFirstAccount(context), what, explicitSync, extras);
 	}
 
 	public static void startExpeditedAutomaticSync(Context context, Uri what){
 		final Bundle extras = new Bundle();
 		extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 
-		startSync(Authenticator.getFirstAccount(context), what, false, extras);
+		startSync(context,Authenticator.getFirstAccount(context), what, false, extras);
 	}
 
 	/**
@@ -136,7 +137,7 @@ public class LocastSyncService extends Service {
 		final Bundle b = new Bundle();
 		b.putString(SyncEngine.EXTRA_DESTINATION_URI, destination.toString());
 
-		startSync(Authenticator.getFirstAccount(context), httpPubUrl, explicitSync, b);
+		startSync(context,Authenticator.getFirstAccount(context), httpPubUrl, explicitSync, b);
 	}
 
 	/**
@@ -147,10 +148,10 @@ public class LocastSyncService extends Service {
 	 * @param explicitSync
 	 * @see #startSync(Account, Uri, boolean, Bundle)
 	 */
-	public static void startSync(Account account, Uri what, boolean explicitSync) {
+	public static void startSync(Context context,Account account, Uri what, boolean explicitSync) {
 		final Bundle b = new Bundle();
 
-		startSync(account, what, explicitSync, b);
+		startSync(context,account, what, explicitSync, b);
 	}
 
 	/**
@@ -166,7 +167,7 @@ public class LocastSyncService extends Service {
 	 *            the extras
 	 * @param extras
 	 */
-	public static void startSync(Account account, Uri what, boolean explicitSync, Bundle extras) {
+	public static void startSync(Context context,Account account, Uri what, boolean explicitSync, Bundle extras) {
 		if (explicitSync) {
 			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 			if (!extras.containsKey(ContentResolver.SYNC_EXTRAS_EXPEDITED)) {
@@ -188,6 +189,8 @@ public class LocastSyncService extends Service {
 			Log.d(TAG, "requesting sync for "+account + " with extras: "+extras);
 		}
 		ContentResolver.requestSync(account, MediaProvider.AUTHORITY, extras);
+		context.sendBroadcast(new Intent(NotificationProgressBar.INTENT_UPDATE_NETWORK_STATUS));
+		
 	}
 
 	@Override

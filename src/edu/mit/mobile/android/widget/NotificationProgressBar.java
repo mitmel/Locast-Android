@@ -14,6 +14,9 @@ public class NotificationProgressBar extends LinearLayout {
 	String textID;
 	private ProgressBar mProgressBar;
 	private TextView mTextView;
+	private TextView mNoDataTextView;
+	public static boolean online=true;
+	public static String INTENT_UPDATE_NETWORK_STATUS="edu.mit.mobile.android.widget.NotificationProgressBar.update";
 	
 	public NotificationProgressBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -24,8 +27,10 @@ public class NotificationProgressBar extends LinearLayout {
             v=inflater.inflate(R.layout.notification_progress_bar,this);
         }
 		mProgressBar=(ProgressBar)findViewById(R.id.progressBar);
+		mNoDataTextView=(TextView)findViewById(R.id.noDataTextView);
 		mTextView=(TextView)findViewById(R.id.emptyTextView);
 		mTextView.setText(textID);
+		updateNetworkStatus();
 	}
 	public NotificationProgressBar(Context context) {
 		super(context);
@@ -40,9 +45,29 @@ public class NotificationProgressBar extends LinearLayout {
 		textID = a.getString(R.styleable.NotificationProgressBar_android_text);
 		a.recycle();
 	}
-	public void showProgressBar(boolean b){
+	public synchronized void showProgressBar(boolean b){
 		mProgressBar.setVisibility((b?View.VISIBLE:View.GONE));
 		mTextView.setVisibility(((!b)?View.VISIBLE:View.GONE));
+		mNoDataTextView.setVisibility((View.GONE));
+		postInvalidate();
+	}
+	public synchronized void setNetworkStatus(boolean online){
+		NotificationProgressBar.online=online;
+		updateNetworkStatus();
+	}
+	public void updateNetworkStatus(){
+		if(!online){
+			mProgressBar.setVisibility(View.GONE);
+			mTextView.setVisibility(View.GONE);
+			mNoDataTextView.setVisibility((View.VISIBLE));
+		}
+		else{
+			if(mProgressBar.getVisibility()==View.GONE && mTextView.getVisibility()==View.GONE){
+				mProgressBar.setVisibility(View.VISIBLE);
+				mTextView.setVisibility(View.GONE);
+				mNoDataTextView.setVisibility((View.GONE));
+			}
+		}
 		postInvalidate();
 	}
 }

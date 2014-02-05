@@ -24,7 +24,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +62,7 @@ import edu.mit.mobile.android.locast.sync.LocastSyncStatusObserver;
 import edu.mit.mobile.android.locast.ver2.R;
 import edu.mit.mobile.android.locast.ver2.itineraries.LocatableItemOverlay;
 import edu.mit.mobile.android.locast.widget.FavoriteClickHandler;
+import edu.mit.mobile.android.widget.NetworkStatusBroadcastReceiver;
 import edu.mit.mobile.android.widget.NotificationProgressBar;
 import edu.mit.mobile.android.widget.RefreshButton;
 import edu.mit.mobile.android.widget.ValidatingCheckBox;
@@ -79,6 +83,8 @@ public class CastDetail extends LocatableDetail implements LoaderManager.LoaderC
 	private Uri mCastMediaUri;
 
 	private static final int REQUEST_SIGNIN = 0;
+	
+	private static NetworkStatusBroadcastReceiver mNetworkBroadcastReceiver;
 
 	private static final String[] CAST_PROJECTION = ArrayUtils.concat(new String[] { Cast._ID,
 			Cast._TITLE, Cast._AUTHOR, Cast._DESCRIPTION, Cast._FAVORITED },
@@ -109,6 +115,27 @@ public class CastDetail extends LocatableDetail implements LoaderManager.LoaderC
 					mProgressBar.showProgressBar(false);
 					mRefresh.setRefreshing(false);
 					break;
+				case NetworkStatusBroadcastReceiver.MSG_NETWORK_STATE:
+					if (Constants.DEBUG) {
+						Log.d(TAG, "Network state changed");
+					}
+					ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+				    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+				    	if (Constants.DEBUG) {
+				    		Log.d(TAG, "Network state connecting");
+				    	}
+				    	mProgressBar.setNetworkStatus(true);
+						mRefresh.setRefreshing(true);
+				    }
+				    else{
+				    	if (Constants.DEBUG) {
+				    		Log.d(TAG, "Network state not connecting");
+				    	}
+				    	mProgressBar.setNetworkStatus(false);
+						mRefresh.setRefreshing(false);
+				    }
+					break;
 			}
 		};
 	};
@@ -119,6 +146,7 @@ public class CastDetail extends LocatableDetail implements LoaderManager.LoaderC
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		mNetworkBroadcastReceiver=new NetworkStatusBroadcastReceiver(this, mHandler);
 		setContentView(R.layout.cast_detail);
 
 		initOverlays();
@@ -161,6 +189,7 @@ public class CastDetail extends LocatableDetail implements LoaderManager.LoaderC
 	@Override
 	protected void onPause() {
 		super.onPause();
+		this.unregisterReceiver(mNetworkBroadcastReceiver);
 		if (mSyncHandle != null) {
 			ContentResolver.removeStatusChangeListener(mSyncHandle);
 		}
@@ -169,6 +198,10 @@ public class CastDetail extends LocatableDetail implements LoaderManager.LoaderC
 	@Override
 	protected void onResume() {
 		super.onResume();
+		IntentFilter intentFilter=new IntentFilter();
+		intentFilter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
+		intentFilter.addAction(NotificationProgressBar.INTENT_UPDATE_NETWORK_STATUS);
+		this.registerReceiver(mNetworkBroadcastReceiver, intentFilter);
 		mSyncHandle = ContentResolver.addStatusChangeListener(0xff, new LocastSyncStatusObserver(
 				this, mHandler));
 		LocastSyncStatusObserver.notifySyncStatusToHandler(this, mHandler);
